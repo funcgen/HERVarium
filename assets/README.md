@@ -29,7 +29,7 @@ HERVarium uses several `.bb` tracks for visualization in the embedded IGV.js bro
 These **are not included in the GitHub repository**, due to their size.  
 Download the complete collection from Zenodo:
 
-👉 **Zenodo: [Domain-Level Annotations and Conservation Scores for Human Endogenous Retroviruses](https://doi.org/10.5281/zenodo.16318927)**
+👉 **Zenodo: [Domain-Level Annotations and Conservation Scores for Human Endogenous Retroviruses](https://doi.org/10.5281/zenodo.16318927)**  
 👉 **Zenodo: [Structural Annotation and Transcription Factor Motif Maps for Human Endogenous Retroviruses](https://doi.org/10.5281/zenodo.17602210)**  
 
 
