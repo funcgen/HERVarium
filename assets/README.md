@@ -2,8 +2,7 @@
 
 This directory contains the **static and data files** required by the HERVarium web-application.  
 
-Only a small subset of files (logos) is tracked in the GitHub repository.  
-**All functional data files used by the web-app must be downloaded from the Zenodo releases** of the HERVarium project.
+Only a small subset of files (logos) is tracked in the GitHub repository. **All functional data files used by the web-app must be downloaded from the Zenodo releases** of the HERVarium project.
 
 ## Contents
 
