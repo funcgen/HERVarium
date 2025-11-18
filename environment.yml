@@ -1,0 +1,24 @@
+name: hervarium
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip
+  - dash
+  - dash-bio
+  - dash-bootstrap-components
+  - flask-caching
+  - pandas
+  - numpy
+  - duckdb
+  - pyarrow
+  - gunicorn        
+  - aiohttp         
+  - pip:
+      - dash==2.14.2
+      - dash-bio==1.0.2
+      - dash-bootstrap-components==1.6.0
+      - flask-caching
