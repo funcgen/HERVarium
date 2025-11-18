@@ -75,7 +75,7 @@ cd HERVarium
 
 ### 2. Create the environment
 
-#### 📦 hervarium.yml
+#### 📦 environment.yml
 
 Below is a complete conda environment tested with HERVarium:
 
