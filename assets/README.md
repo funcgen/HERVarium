@@ -35,8 +35,6 @@ Download the complete collection from Zenodo:
 
 Place all downloaded `.bb` files inside this `assets/` directory.
 
----
-
 ### 3. Reference Genome Files (download from Zenodo)
 HERVarium requires the GRCh38 primary assembly FASTA and its index:
 
