@@ -32,24 +32,34 @@ All raw and derived datasets used in HERVarium are publicly available in two Zen
 ```
 HERVarium/
 │
-├── app.py # Main Dash application
-├── environment.yml # Reproducible conda environment
+├── app.py                       # Main Dash application
+├── environment.yml              # Reproducible conda environment
+│
+├── scripts/                     # Helper scripts to rebuild HERVarium assets
+│   ├── prep_hervarium_tables.py     # Build Parquet + JSON tables used by the app
+│   ├── gencode_to_bigbed.sh         # GENCODE GTF → gene-symbol bigBed track
+│   ├── make_ltr_bigbed.sh           # LTR BED → LTR bigBed
+│   ├── make_segments_bigbed.sh      # U3/R/U5 segments BED → bigBed
+│   ├── make_signals_bigbed.sh       # Promoter + PAS signal BED → bigBed
+│   ├── make_pbs_ppt_bigbed.sh       # PBS/PPT BED → bigBed
+│   └── simplify_internal_and_ltr_names.sh  # Standardize BED name fields
 │
 ├── assets/
-│ ├── precomputed/ # Parquet + JSON metadata files
-│ │ ├── agg.parquet
-│ │ ├── ltr.parquet
-│ │ ├── ltr_u3r_u5.parquet
-│ │ ├── domains_meta.json
-│ │ ├── ltr_meta.json
-│ │ └── ltr_u3r_u5_meta.json
-│ │
-│ ├── *.bb # BigBed tracks (internal, LTRs, U3R, PBS/PPT, promoter/PAS, TFBM)
-│ ├── GRCh38.primary_assembly.genome.fa
-│ ├── GRCh38.primary_assembly.genome.fa.fai
-│ ├── logo_cnag.jpg
-│ ├── logo_generalitat.png
-│ └── logo_eu.png
+│   ├── precomputed/             # Parquet + JSON metadata files (loaded by app.py)
+│   │   ├── agg.parquet
+│   │   ├── ltr.parquet
+│   │   ├── ltr_u3r_u5.parquet
+│   │   ├── domains_meta.json
+│   │   ├── ltr_meta.json
+│   │   └── ltr_u3r_u5_meta.json
+│   │
+│   ├── *.bb                     # All BigBed tracks (internal, LTRs, U3R, PBS/PPT,
+│   │                             # promoter/PAS, TFBM, GENCODE gene symbols)
+│   ├── GRCh38.primary_assembly.genome.fa
+│   ├── GRCh38.primary_assembly.genome.fa.fai
+│   ├── logo_cnag.jpg
+│   ├── logo_generalitat.png
+│   └── logo_eu.png
 │
 └── README.md
 ```
