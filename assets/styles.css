@@ -1,0 +1,30 @@
+.brand-wrap {
+  gap: .75rem;               /* more breathing room between logo & text */
+}
+
+.brand-logo {
+  height: 60px;              /* ⬆ bigger logo area */
+  width: auto;
+  border-radius: 12px;       /* pill shape */
+  background: #f9f5f2;
+  padding: 4px 12px;         /* extra padding for balance */
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  object-fit: contain;
+}
+
+@media (min-width: 992px) {
+  .brand-logo { height: 70px; }   /* on large screens */
+}
+
+.brand-text {
+  font-weight: 700;
+  letter-spacing: .3px;
+  font-size: 1.5rem;         /* larger HERVarium text to match logo */
+}
+
+.navbar {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  min-height: 80px;          /* ensures navbar height adjusts */
+}
+
