@@ -108,7 +108,7 @@ dependencies:
 
 
 ``` 
-conda env create -f hervarium.yml
+conda env create -f environment.yml
 conda activate hervarium
 ```
 
