@@ -181,5 +181,6 @@ If you use HERVarium in your work, please cite:
 
 Data citations:
 > Internal domain annotation: https://doi.org/10.5281/zenodo.16318927
+
 > LTR regulatory atlas: https://doi.org/10.5281/zenodo.17602210  
 
