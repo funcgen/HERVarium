@@ -25,10 +25,9 @@ These files specify valid categories, filter ranges, and table schemas used by t
 
 ## Downloading the Data
 
-All files are available from the Zenodo archives:
+All files are available from the Zenodo archive:
 
-👉 **Zenodo: [Domain-Level Annotations and Conservation Scores for Human Endogenous Retroviruses](https://doi.org/10.5281/zenodo.16318927)**  
-👉 **Zenodo: [Structural Annotation and Transcription Factor Motif Maps for Human Endogenous Retroviruses](https://doi.org/10.5281/zenodo.17602210)**  
+👉 [https://doi.org/10.5281/zenodo.18551737](https://doi.org/10.5281/zenodo.18551737)  
 
 Download the `.parquet` and `.json` files and place them inside this directory.
 
