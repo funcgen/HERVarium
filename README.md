@@ -19,13 +19,16 @@ and link internal regions → LTRs → U3/R/U5 regulatory features.
 
 ## 🧬 Data availability
 
-All raw and derived datasets used in HERVarium are publicly available in two Zenodo repositories:
+All raw and derived datasets used in HERVarium are publicly available in three Zenodo repositories:
 
 - **LTR regulatory atlas (U3–R–U5, motifs, PBS/PPT)**  
   https://doi.org/10.5281/zenodo.17602210
 
 - **Internal domain annotation (HERV ORFs + GyDB HMMs)**  
   https://doi.org/10.5281/zenodo.16318927
+
+- **HERVarium data bundle for the interactive application**  
+  https://doi.org/10.5281/zenodo.18551737 
 
 ## 📁 Repository structure
 
@@ -46,9 +49,7 @@ HERVarium/
 │   ├── simplify_fimo_bed_name.py
 │   ├── simplify_domains_bed.sh
 │   ├── simplify_internal_and_ltr_names.sh
-│   ├── make_gtex_expressed.sh
-│   ├── build_motif_duckdb.py
-│   └── change_bb_colors.sh
+│   └── make_gtex_expressed.sh
 │
 ├── bin/
 │   └── bedToBigBed                 # UCSC bedToBigBed binary (vendored copy)
@@ -56,52 +57,24 @@ HERVarium/
 ├── assets/
 │   ├── genome/
 │   │   ├── GRCh38.primary_assembly.genome.fa
-│   │   ├── GRCh38.primary_assembly.genome.fa.fai
-│   │   └── GRCh38.primary_assembly.genome.tar.xz
+│   │   └── GRCh38.primary_assembly.genome.fa.fai
 │   │
 │   ├── gencode/
-│   │   ├── gencode.v48.primary_assembly.annotation.gtf
-│   │   ├── gencode.v48.bed
-│   │   ├── gencode.v48.genepred
-│   │   ├── gencode.v48.genesymbols.bed
-│   │   ├── gencode.v48.genesymbols.sorted.bed
 │   │   └── gencode.v48.genesymbols.bb
 │   │
 │   ├── internals/
-│   │   ├── ERV_full_plus_components.bed
-│   │   ├── ERV_full_plus_components.map.tsv
-│   │   ├── ERV_GyDB_v6_domains.bed
-│   │   ├── HERV_internal_v6.bed
 │   │   ├── HERV_internal_simplified.bed
 │   │   ├── HERV_internal_domains_simplified.bed
-│   │   ├── HERV_loci_annotated_domains.tsv
-│   │   └── INTERNAL_fully_annotated.tsv
 │   │
 │   ├── ltr/
-│   │   ├── ERVs_LTRs_merged_v4.bed
-│   │   ├── ERVs_LTRs_merged_v4.simplified.bed
-│   │   ├── ERV_ltr_v4_merged.simplified.clean.bed
-│   │   ├── ERV_ltr_v4_merged.simplified.sorted.bed
 │   │   ├── ERV_ltr_merged.simplified.bb
-│   │   ├── LTR_fully_annotated.tsv
 │   │   │
 │   │   ├── segments/
-│   │   │   ├── HERV_LTR_U3_R_U5_catalogue.tsv
-│   │   │   ├── HERV_LTR_U3_R_U5_segments_allconf.bed
-│   │   │   ├── HERV_LTR_U3_R_U5_segments_allconf.clean.bed
-│   │   │   ├── HERV_LTR_U3_R_U5_segments_allconf.sorted.bed
 │   │   │   ├── HERV_LTR_U3_R_U5_segments_allconf.bb
-│   │   │   ├── HERV_U3_R_U5_segments_highconf.bed
-│   │   │   ├── HERV_LTR_U3_R_U5_signals.bed
-│   │   │   ├── HERV_LTR_U3_R_U5_signals.clean.bed
-│   │   │   ├── HERV_LTR_U3_R_U5_signals.sorted.bed
+|   |   |   ├── HERV_LTR_U3_R_U5_PBS_PPT.bb
 │   │   │   └── HERV_LTR_U3_R_U5_signals.bb
 │   │   │
 │   │   └── tfbm/
-│   │       ├── fimo_parsed_v4.tsv
-│   │       ├── fimo_parsed_v4.bed
-│   │       ├── fimo_parsed_v4.sorted.bed
-│   │       ├── fimo_parsed_v4.fixed.bed
 │   │       └── fimo_parsed.bb
 │   │
 │   ├── precomputed/
