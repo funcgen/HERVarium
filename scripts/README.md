@@ -7,6 +7,7 @@ Most users will not need to run them, as all resulting bigBed files and precompu
 Below is a short description of each script.
 
 ## Python
+
 ```
 prep_hervarium_tables.py
 ```
@@ -52,6 +53,26 @@ simplify_internal_and_ltr_names.sh
 ``` 
 - Utility to clean and standardize BED name fields for internal regions and LTRs.
 - Converts verbose RepeatMasker-style identifiers (e.g., prefix_pos_chr_start_end_strand_+) into compact prefix_chr_start_end_+ identifiers consistent with HERVarium.
+
+```
+simplify_fimo_bed_name.py  
+```
+
+- Simplifies BED name fields from FIMO motif scans by collapsing verbose identifiers into a compact LTR_subfamily|TF format, removing JASPAR motif ID prefixes.  
+- Preserves all other BED columns unchanged, producing a cleaned BED file suitable for downstream bigBed conversion and genome browser visualization in HERVarium.
+
+```
+simplify_domains_bed.sh  
+```
+- Simplifies BED name fields for HERV internal domain annotations by extracting the ERV subfamily, domain type, and rounding domain coverage to three decimal places, producing a compact Subfamily|DomainType|Coverage format.  
+- Leaves genomic coordinates and all other BED columns unchanged, generating a cleaned BED file suitable for bigBed conversion and visualization in the HERVarium genome browser.  
+
+```
+convert_fimo_to_bigbed.sh
+```
+- Processes BED files generated from FIMO motif scans by sorting coordinates, simplifying feature names to a compact LTR_subfamily|TF format, and normalizing scores to bigBed-compatible integer values.  
+- Generates a genome chrom.sizes file from a FASTA index and converts the processed BED file into a bigBed track for visualization of transcription factor binding motifs in the HERVarium IGV.js browser.
+
 
 ## Usage
 
