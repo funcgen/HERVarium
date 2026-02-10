@@ -32,20 +32,79 @@ All raw and derived datasets used in HERVarium are publicly available in two Zen
 ```
 HERVarium/
 │
-├── app.py                       # Main Dash application
-├── environment.yml              # Reproducible conda environment
+├── app.py                          # Main Dash application
+├── environment.yml                 # Reproducible conda environment
 │
-├── scripts/                     # Helper scripts to rebuild HERVarium assets
-│   ├── prep_hervarium_tables.py     # Build Parquet + JSON tables used by the app
-│   ├── gencode_to_bigbed.sh         # GENCODE GTF → gene-symbol bigBed track
-│   ├── make_ltr_bigbed.sh           # LTR BED → LTR bigBed
-│   ├── make_segments_bigbed.sh      # U3/R/U5 segments BED → bigBed
-│   ├── make_signals_bigbed.sh       # Promoter + PAS signal BED → bigBed
-│   ├── make_pbs_ppt_bigbed.sh       # PBS/PPT BED → bigBed
-│   └── simplify_internal_and_ltr_names.sh  # Standardize BED name fields
+├── scripts/                        # Helper scripts to rebuild HERVarium assets
+│   ├── prep_hervarium_tables.py
+│   ├── gencode_to_bigbed.sh
+│   ├── make_ltr_bigbed.sh
+│   ├── make_segments_bigbed.sh
+│   ├── make_signals_bigbed.sh
+│   ├── make_pbs_ppt_bigbed.sh
+│   ├── convert_fimo_to_bigbed.sh
+│   ├── simplify_fimo_bed_name.py
+│   ├── simplify_domains_bed.sh
+│   ├── simplify_internal_and_ltr_names.sh
+│   ├── make_gtex_expressed.sh
+│   ├── build_motif_duckdb.py
+│   └── change_bb_colors.sh
+│
+├── bin/
+│   └── bedToBigBed                 # UCSC bedToBigBed binary (vendored copy)
 │
 ├── assets/
-│   ├── precomputed/             # Parquet + JSON metadata files (loaded by app.py)
+│   ├── genome/
+│   │   ├── GRCh38.primary_assembly.genome.fa
+│   │   ├── GRCh38.primary_assembly.genome.fa.fai
+│   │   └── GRCh38.primary_assembly.genome.tar.xz
+│   │
+│   ├── gencode/
+│   │   ├── gencode.v48.primary_assembly.annotation.gtf
+│   │   ├── gencode.v48.bed
+│   │   ├── gencode.v48.genepred
+│   │   ├── gencode.v48.genesymbols.bed
+│   │   ├── gencode.v48.genesymbols.sorted.bed
+│   │   └── gencode.v48.genesymbols.bb
+│   │
+│   ├── internals/
+│   │   ├── ERV_full_plus_components.bed
+│   │   ├── ERV_full_plus_components.map.tsv
+│   │   ├── ERV_GyDB_v6_domains.bed
+│   │   ├── HERV_internal_v6.bed
+│   │   ├── HERV_internal_simplified.bed
+│   │   ├── HERV_internal_domains_simplified.bed
+│   │   ├── HERV_loci_annotated_domains.tsv
+│   │   └── INTERNAL_fully_annotated.tsv
+│   │
+│   ├── ltr/
+│   │   ├── ERVs_LTRs_merged_v4.bed
+│   │   ├── ERVs_LTRs_merged_v4.simplified.bed
+│   │   ├── ERV_ltr_v4_merged.simplified.clean.bed
+│   │   ├── ERV_ltr_v4_merged.simplified.sorted.bed
+│   │   ├── ERV_ltr_merged.simplified.bb
+│   │   ├── LTR_fully_annotated.tsv
+│   │   │
+│   │   ├── segments/
+│   │   │   ├── HERV_LTR_U3_R_U5_catalogue.tsv
+│   │   │   ├── HERV_LTR_U3_R_U5_segments_allconf.bed
+│   │   │   ├── HERV_LTR_U3_R_U5_segments_allconf.clean.bed
+│   │   │   ├── HERV_LTR_U3_R_U5_segments_allconf.sorted.bed
+│   │   │   ├── HERV_LTR_U3_R_U5_segments_allconf.bb
+│   │   │   ├── HERV_U3_R_U5_segments_highconf.bed
+│   │   │   ├── HERV_LTR_U3_R_U5_signals.bed
+│   │   │   ├── HERV_LTR_U3_R_U5_signals.clean.bed
+│   │   │   ├── HERV_LTR_U3_R_U5_signals.sorted.bed
+│   │   │   └── HERV_LTR_U3_R_U5_signals.bb
+│   │   │
+│   │   └── tfbm/
+│   │       ├── fimo_parsed_v4.tsv
+│   │       ├── fimo_parsed_v4.bed
+│   │       ├── fimo_parsed_v4.sorted.bed
+│   │       ├── fimo_parsed_v4.fixed.bed
+│   │       └── fimo_parsed.bb
+│   │
+│   ├── precomputed/
 │   │   ├── agg.parquet
 │   │   ├── ltr.parquet
 │   │   ├── ltr_u3r_u5.parquet
@@ -53,15 +112,17 @@ HERVarium/
 │   │   ├── ltr_meta.json
 │   │   └── ltr_u3r_u5_meta.json
 │   │
-│   ├── *.bb                     # All BigBed tracks (internal, LTRs, U3R, PBS/PPT,
-│   │                             # promoter/PAS, TFBM, GENCODE gene symbols)
-│   ├── GRCh38.primary_assembly.genome.fa
-│   ├── GRCh38.primary_assembly.genome.fa.fai
-│   ├── logo_cnag.jpg
-│   ├── logo_generalitat.png
-│   └── logo_eu.png
+│   ├── hg38.chrom.sizes
+│   ├── styles.css
+│   ├── favicon.ico
+│   └── logos/
+│       ├── hervarium_logo.png
+│       ├── logo_cnag.jpg
+│       ├── logo_generalitat.png
+│       └── logo_eu.png
 │
 └── README.md
+
 ```
 
 Each Zenodo record contains:  
@@ -124,25 +185,10 @@ conda activate hervarium
 
 ### 3. Download the precomputed annotation files
 
-Download the two Zenodo datasets:
-- https://doi.org/10.5281/zenodo.17602210
-- https://doi.org/10.5281/zenodo.16318927
+Download the Zenodo HERVarium data bundle:
+- [https://doi.org/10.5281/zenodo.18551737](https://doi.org/10.5281/zenodo.18551737)
 
-From each archive, copy:
-
-- .bb BigBed files
-- .parquet tables
-- Meta JSON files
-- GRCh38.primary_assembly.genome.fa and .fai
-
-Copy that files into: 
-
-```
-HERVarium/assets/
-├── precomputed/
-└── (all .bb in assets/)
-```
-Keep the file names unchanged (the app expects these exact names). 
+From each file, copy them to their corresponding folder. Keep the file names unchanged (the app expects these exact names). 
 
 ## ▶️ Run HERVarium locally
 
