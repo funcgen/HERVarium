@@ -50,9 +50,9 @@ def locus_to_interval(locus: str):
 # Load inputs
 # =========================
 
-ltr_tsv = ASSETS / "LTR_fully_annotated.tsv"
-int_full_tsv = ASSETS / "INTERNAL_fully_annotated.tsv"
-dom_tsv = ASSETS / "HERV_loci_annotated_domains_v3.tsv"
+ltr_tsv = ASSETS / "ltr/LTR_fully_annotated.tsv"
+int_full_tsv = ASSETS / "internals/INTERNAL_fully_annotated.tsv"
+dom_tsv = ASSETS / "internals/HERV_loci_annotated_domains_v6.tsv"
 
 df_ltr_raw = pd.read_csv(ltr_tsv, sep="\t", low_memory=False)
 df_int_full = pd.read_csv(int_full_tsv, sep="\t", low_memory=False)
@@ -161,9 +161,9 @@ def _load_u3r_bed(path: Path, source: str) -> pd.DataFrame:
     df["source"] = source
     return df
 
-u3r_pbs_ppt_bed = ASSETS / "HERV_LTR_U3_R_U5_PBS_PPT.bed"
-u3r_segments_bed = ASSETS / "HERV_LTR_U3_R_U5_segments_allconf.bed"
-u3r_signals_bed = ASSETS / "HERV_LTR_U3_R_U5_signals.bed"
+u3r_pbs_ppt_bed = ASSETS / "ltr/segments/HERV_LTR_U3_R_U5_PBS_PPT.bed"
+u3r_segments_bed = ASSETS / "ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.bed"
+u3r_signals_bed = ASSETS / "ltr/segments/HERV_LTR_U3_R_U5_signals.bed"
 
 df_pbs_ppt = _load_u3r_bed(u3r_pbs_ppt_bed, "PBS_PPT")
 df_segments = _load_u3r_bed(u3r_segments_bed, "SEGMENT")

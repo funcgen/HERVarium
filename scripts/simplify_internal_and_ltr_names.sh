@@ -19,8 +19,8 @@ usage() {
 Usage: $0 --type {internal|ltr} <input.bed[.gz]> <output.bed[.gz]>
 
 Examples:
-  $0 --type internal assets/ERV_GyDB_v4_merged.bed assets/ERV_GyDB_v4_merged.simplified.bed
-  $0 --type ltr      assets/ERV_ltr_v1_merged.bed   assets/ERV_ltr_v1_merged.simplified.bed
+  $0 --type internal assets/ERV_GyDB_v4_merged.bed assets/ERV_GyDB_merged.simplified.bed
+  $0 --type ltr      assets/ERV_ltr_v1_merged.bed   assets/ERV_ltr_merged.simplified.bed
 EOF
 }
 

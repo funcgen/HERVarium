@@ -20,9 +20,9 @@ GENOME_FA=$1
 LTR_BED=$2
 
 CHROM_SIZES="assets/hg38.chrom.sizes"
-CLEAN_BED="assets/ERV_ltr_v2_merged.simplified.clean.bed"
-SORTED_BED="assets/ERV_ltr_v2_merged.simplified.sorted.bed"
-BIGBED_OUT="assets/ERV_ltr_v2_merged.simplified.bb"
+CLEAN_BED="assets/ltr/ERV_ltr_merged.simplified.clean.bed"
+SORTED_BED="assets/ltr/ERV_ltr_merged.simplified.sorted.bed"
+BIGBED_OUT="assets/ltr/ERV_ltr_merged.simplified.bb"
 
 # 0. Check required tools
 for cmd in samtools ./bedToBigBed sort cut awk; do

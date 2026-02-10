@@ -20,9 +20,9 @@ GENOME_FA=$1
 PBS_PPT_BED=$2
 
 CHROM_SIZES="assets/hg38.chrom.sizes"
-CLEAN_BED="assets/HERV_LTR_U3_R_U5_PBS_PPT.clean.bed"
-SORTED_BED="assets/HERV_LTR_U3_R_U5_PBS_PPT.sorted.bed"
-BIGBED_OUT="assets/HERV_LTR_U3_R_U5_PBS_PPT.bb"
+CLEAN_BED="assets/ltr/segments/HERV_LTR_U3_R_U5_PBS_PPT.clean.bed"
+SORTED_BED="assets/ltr/segments/HERV_LTR_U3_R_U5_PBS_PPT.sorted.bed"
+BIGBED_OUT="assets/ltr/segments/HERV_LTR_U3_R_U5_PBS_PPT.bb"
 
 # 0. Check required tools
 for cmd in samtools ./bedToBigBed sort cut awk; do

@@ -20,12 +20,12 @@ GENOME_FA=$1
 SEGMENTS_BED=$2
 
 CHROM_SIZES="assets/hg38.chrom.sizes"
-CLEAN_BED="assets/HERV_LTR_U3_R_U5_segments_allconf.clean.bed"
-SORTED_BED="assets/HERV_LTR_U3_R_U5_segments_allconf.sorted.bed"
-BIGBED_OUT="assets/HERV_LTR_U3_R_U5_segments_allconf.bb"
+CLEAN_BED="assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.clean.bed"
+SORTED_BED="assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.sorted.bed"
+BIGBED_OUT="assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.bb"
 
 # 0. Check required tools
-for cmd in samtools bedToBigBed sort cut awk; do
+for cmd in samtools ./bedToBigBed sort cut awk; do
     if ! command -v "$cmd" >/dev/null 2>&1; then
         echo "ERROR: '$cmd' not found in PATH. Please install it before running this script."
         exit 1
@@ -81,7 +81,7 @@ echo "3) Sorting cleaned BED -> $SORTED_BED"
 sort -k1,1 -k2,2n "$CLEAN_BED" > "$SORTED_BED"
 
 echo "4) Converting to bigBed -> $BIGBED_OUT"
-bedToBigBed "$SORTED_BED" "$CHROM_SIZES" "$BIGBED_OUT"
+./bedToBigBed "$SORTED_BED" "$CHROM_SIZES" "$BIGBED_OUT"
 
 echo "Done."
 echo "Generated:"
