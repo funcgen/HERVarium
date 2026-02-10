@@ -2,35 +2,43 @@
 set -euo pipefail
 
 # Usage:
-#   ./make_ltr_bigbed.sh GRCh38.primary_assembly.genome.fa assets/ERV_ltr_v2_merged.simplified.bed
+#   ./make_ltr_bigbed.sh assets/GRCh38.primary_assembly.genome.fa assets/ltr/ERVs_LTRs_merged_v4.simplified.bed
 #
 # Output:
 #   - assets/hg38.chrom.sizes
-#   - assets/ERV_ltr_v2_merged.simplified.clean.bed
-#   - assets/ERV_ltr_v2_merged.simplified.sorted.bed
-#   - assets/ERV_ltr_v2_merged.simplified.bb
+#   - assets/ltr/ERV_ltr_merged.simplified.clean.bed
+#   - assets/ltr/ERV_ltr_merged.simplified.sorted.bed
+#   - assets/ltr/ERV_ltr_merged.simplified.bb
 
 if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <genome_fasta> <ltr_bed>"
-    echo "Example: $0 GRCh38.primary_assembly.genome.fa assets/ERV_ltr_v2_merged.simplified.bed"
+    echo "Usage: $0 <genome_fasta> <ltr_bed>" >&2
     exit 1
 fi
 
-GENOME_FA=$1
-LTR_BED=$2
+GENOME_FA="$1"
+LTR_BED="$2"
 
 CHROM_SIZES="assets/hg38.chrom.sizes"
 CLEAN_BED="assets/ltr/ERV_ltr_merged.simplified.clean.bed"
 SORTED_BED="assets/ltr/ERV_ltr_merged.simplified.sorted.bed"
 BIGBED_OUT="assets/ltr/ERV_ltr_merged.simplified.bb"
 
-# 0. Check required tools
-for cmd in samtools ./bedToBigBed sort cut awk; do
+# Ensure output dirs exist
+mkdir -p "assets" "assets/ltr"
+
+# -------- Tool checks --------
+for cmd in samtools sort cut awk; do
     if ! command -v "$cmd" >/dev/null 2>&1; then
-        echo "ERROR: '$cmd' not found in PATH. Please install it before running this script."
+        echo "ERROR: '$cmd' not found in PATH." >&2
         exit 1
     fi
 done
+
+BEDTOBIGBED="./bin/bedToBigBed"
+if [[ ! -x "$BEDTOBIGBED" ]]; then
+    echo "ERROR: vendored bedToBigBed not found or not executable at $BEDTOBIGBED" >&2
+    exit 1
+fi
 
 echo "1) Indexing FASTA with samtools faidx..."
 samtools faidx "$GENOME_FA"
@@ -45,14 +53,10 @@ awk 'BEGIN{OFS="\t"}
     if (NF < 3) next
 
     # Ensure at least 6 columns (BED6)
-    # col1: chrom, col2: start, col3: end
-    # col4: name (keep as-is or "." if missing)
-    # col5: score (int 0–1000 for bigBed)
-    # col6: strand ("+" / "-" / "." if missing)
     for (i = NF+1; i <= 6; i++) {
         if (i == 4) $i = "."
         else if (i == 5) $i = 0
-        else if (i == 6) $i = "+"
+        else if (i == 6) $i = "."   # safer default than "+"
     }
 
     # Fix score column to integer 0–1000
@@ -60,8 +64,8 @@ awk 'BEGIN{OFS="\t"}
     if (score == "." || score == "" || score == "NA") {
         s = 0
     } else {
-        s = int(score)        # if it was already integer; if float, this truncates
-        if (s < 0)   s = 0
+        s = int(score)
+        if (s < 0) s = 0
         if (s > 1000) s = 1000
     }
     $5 = s
@@ -73,12 +77,11 @@ echo "3) Sorting cleaned BED -> $SORTED_BED"
 sort -k1,1 -k2,2n "$CLEAN_BED" > "$SORTED_BED"
 
 echo "4) Converting to bigBed -> $BIGBED_OUT"
-./bedToBigBed "$SORTED_BED" "$CHROM_SIZES" "$BIGBED_OUT"
+"$BEDTOBIGBED" "$SORTED_BED" "$CHROM_SIZES" "$BIGBED_OUT"
 
-echo "Done."
+echo "[OK] Done."
 echo "Generated:"
 echo "  - $CHROM_SIZES"
 echo "  - $CLEAN_BED"
 echo "  - $SORTED_BED"
 echo "  - $BIGBED_OUT"
-

@@ -6,31 +6,39 @@ set -euo pipefail
 #
 # Output:
 #   - assets/hg38.chrom.sizes
-#   - assets/HERV_LTR_U3_R_U5_segments_allconf.clean.bed
-#   - assets/HERV_LTR_U3_R_U5_segments_allconf.sorted.bed
-#   - assets/HERV_LTR_U3_R_U5_segments_allconf.bb
+#   - assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.clean.bed
+#   - assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.sorted.bed
+#   - assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.bb
 
 if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <genome_fasta> <segments_bed>"
-    echo "Example: $0 GRCh38.primary_assembly.genome.fa HERV_LTR_U3_R_U5_segments_allconf.bed"
+    echo "Usage: $0 <genome_fasta> <segments_bed>" >&2
     exit 1
 fi
 
-GENOME_FA=$1
-SEGMENTS_BED=$2
+GENOME_FA="$1"
+SEGMENTS_BED="$2"
 
 CHROM_SIZES="assets/hg38.chrom.sizes"
 CLEAN_BED="assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.clean.bed"
 SORTED_BED="assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.sorted.bed"
 BIGBED_OUT="assets/ltr/segments/HERV_LTR_U3_R_U5_segments_allconf.bb"
 
-# 0. Check required tools
-for cmd in samtools ./bedToBigBed sort cut awk; do
+# Ensure output dirs exist
+mkdir -p "assets" "assets/ltr/segments"
+
+# -------- Tool checks --------
+for cmd in samtools sort cut awk; do
     if ! command -v "$cmd" >/dev/null 2>&1; then
-        echo "ERROR: '$cmd' not found in PATH. Please install it before running this script."
+        echo "ERROR: '$cmd' not found in PATH." >&2
         exit 1
     fi
 done
+
+BEDTOBIGBED="./bin/bedToBigBed"
+if [[ ! -x "$BEDTOBIGBED" ]]; then
+    echo "ERROR: vendored bedToBigBed not found or not executable at $BEDTOBIGBED" >&2
+    exit 1
+fi
 
 echo "1) Indexing FASTA with samtools faidx..."
 samtools faidx "$GENOME_FA"
@@ -46,15 +54,13 @@ awk 'BEGIN{OFS="\t"}
 
     # Ensure at least 6 columns (BED6)
     for (i = NF+1; i <= 6; i++) {
-        if (i == 5) $i = 0
-        else if (i == 6) $i = "+"
-        else $i = "."
+        if (i == 4) $i = "."
+        else if (i == 5) $i = 0
+        else if (i == 6) $i = "."   # safer default than "+"
     }
 
     # --- Rewrite name (col 4) to U3 / U3|LOW_CONF / R / U5 ---
-
-    # Original name looks like: seqname|U3|LOW_CONF
-    # We keep token2 and optionally token3
+    # Original name: seqname|U3|LOW_CONF
     split($4, a, "|")
     newname = (length(a[2]) ? a[2] : $4)
     if (length(a[3])) {
@@ -62,13 +68,12 @@ awk 'BEGIN{OFS="\t"}
     }
     $4 = newname
 
-    # --- Fix score (col 5) to integer 0-1000 for bigBed ---
-
+    # --- Fix score (col 5) to integer 0–1000 ---
     score = $5
     if (score == "." || score == "" || score == "NA") {
         s = 0
     } else {
-        s = int(score * 100)   # e.g. 1.05 -> 105, 4.83 -> 483
+        s = int(score * 100)   # e.g. 1.05 → 105
         if (s < 0)   s = 0
         if (s > 1000) s = 1000
     }
@@ -81,12 +86,11 @@ echo "3) Sorting cleaned BED -> $SORTED_BED"
 sort -k1,1 -k2,2n "$CLEAN_BED" > "$SORTED_BED"
 
 echo "4) Converting to bigBed -> $BIGBED_OUT"
-./bedToBigBed "$SORTED_BED" "$CHROM_SIZES" "$BIGBED_OUT"
+"$BEDTOBIGBED" "$SORTED_BED" "$CHROM_SIZES" "$BIGBED_OUT"
 
-echo "Done."
+echo "[OK] Done."
 echo "Generated:"
 echo "  - $CHROM_SIZES"
 echo "  - $CLEAN_BED"
 echo "  - $SORTED_BED"
 echo "  - $BIGBED_OUT"
-
