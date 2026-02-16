@@ -238,7 +238,7 @@ navbar = dbc.Navbar(
                     [
                         dbc.Col(
                             html.Img(
-                                src="/assets/hervarium_logo.png",  # use .png if you add it later
+                                src="/assets/logos/hervarium_logo.png",  # use .png if you add it later
                                 className="brand-logo",
                                 alt="HERVarium logo",
                                 draggable="false",
@@ -595,7 +595,7 @@ BASE_TRACKS = [
         "name": "GENCODE genes (symbols)",
         "type": "annotation",
         "format": "bigbed",
-        "url": "/assets/gencode.v48.genesymbols.bb",
+        "url": "/assets/gencode/gencode.v48.genesymbols.bb",
         "displayMode": "EXPANDED",
         "height": 150,
         "color": "#7F7F7F",   # neutral gray
@@ -722,8 +722,8 @@ igv_browser = dashbio.Igv(
     reference={
         "id": "hg38",
         "name": "Human (GRCh38)",
-        "fastaURL": "/assets/GRCh38.primary_assembly.genome.fa",
-        "indexURL": "/assets/GRCh38.primary_assembly.genome.fa.fai",
+        "fastaURL": "/assets/genome/GRCh38.primary_assembly.genome.fa",
+        "indexURL": "/assets/genome/GRCh38.primary_assembly.genome.fa.fai",
     },
     locus="chr10:6,823,465-6,834,272",
     minimumBases=1,
@@ -891,8 +891,7 @@ content = dbc.Col(
                         sort_by=[],
                         export_format="csv",
                         export_headers="display",
-                        filter_action="custom",
-                        filter_query="",
+                        filter_action="none",
                         row_selectable="single",
                         selected_rows=[],
                         style_table=LTR_TABLE_STYLE,
@@ -1002,9 +1001,9 @@ content = dbc.Col(
                 # Logos row
                 html.Div(
                     [
-                        html.Img(src="/assets/logo_cnag.jpg", height="50px", style={"marginRight": "15px"}),
-                        html.Img(src="/assets/logo_generalitat.png", height="50px"),
-                        html.Img(src="/assets/logo_eu.png", height="50px", style={"marginRight": "15px"}),
+                        html.Img(src="/assets/logos/logo_cnag.jpg", height="50px", style={"marginRight": "15px"}),
+                        html.Img(src="/assets/logos/logo_generalitat.png", height="50px"),
+                        html.Img(src="/assets/logos/logo_eu.png", height="50px", style={"marginRight": "15px"}),
                     ],
                     style={"marginTop": "15px", "display": "flex", "justifyContent": "center"},
                 ),
@@ -1041,48 +1040,86 @@ import urllib.parse
 import pandas as pd
 import re
 
-def _apply_bar_filter(df, filter_query):
-    # minimal parser compatible with your DataTable usage
+import re
+import pandas as pd
+import numpy as np
+
+_AND_SPLIT_RE = re.compile(r"\s*&&\s*")
+_PARENS_RE = re.compile(r"^\((.*)\)$")  # strip one outer (...) pair
+
+
+def _strip_outer_parens(s: str) -> str:
+    s = (s or "").strip()
+    while True:
+        m = _PARENS_RE.match(s)
+        if not m:
+            return s
+        s = m.group(1).strip()
+
+
+def _apply_bar_filter(df: pd.DataFrame, filter_query: str) -> pd.DataFrame:
+    """
+    Apply Dash DataTable 'filter_query' (custom filtering) to a pandas DataFrame.
+    Supports AND (&&). Ignores OR (||) for now.
+    """
     if not filter_query:
         return df
-    parts = [p.strip() for p in filter_query.split(" && ")]
-    for p in parts:
-        # Examples: {subfamily} contains "HERVH"; {n_motifs} >= 50
-        m = re.match(r'^\{(.+?)\}\s*(contains|icontains|=|!=|>=|>|<=|<)\s*"(.*)"$', p)
-        if not m:  # try numeric without quotes
-            m = re.match(r'^\{(.+?)\}\s*(=|!=|>=|>|<=|<)\s*([0-9]+)$', p)
-        if not m:
+
+    # Dash may include parentheses and variable spacing
+    parts = [_strip_outer_parens(p) for p in _AND_SPLIT_RE.split(filter_query) if p.strip()]
+
+    for part in parts:
+        col, op, val = _split_filter_part(part)  # <-- use your existing helper
+        if not col or op is None:
             continue
-        col, op, val = m.groups()
         if col not in df.columns:
             continue
-        series = df[col]
+
+        s = df[col]
+
+        # contains / icontains
         if op in ("contains", "icontains"):
-            patt = val
-            if op == "icontains":
-                mask = series.astype("string").str.contains(patt, case=False, na=False)
+            text = s.astype("string")
+            mask = text.str.contains(val, case=(op != "icontains"), na=False)
+
+        # numeric comparisons (try to coerce even if dtype is object/Int64)
+        elif op in (">=", ">", "<=", "<", "=", "!="):
+            # try numeric first
+            num = pd.to_numeric(s, errors="coerce")
+            v = pd.to_numeric(pd.Series([val]), errors="coerce").iloc[0]
+
+            if not pd.isna(v) and num.notna().any():
+                if op == "=":
+                    mask = num == v
+                elif op == "!=":
+                    mask = num != v
+                elif op == ">":
+                    mask = num > v
+                elif op == ">=":
+                    mask = num >= v
+                elif op == "<":
+                    mask = num < v
+                elif op == "<=":
+                    mask = num <= v
             else:
-                mask = series.astype("string").str.contains(patt, na=False)
-        else:
-            # numeric or exact comparisons
-            if pd.api.types.is_numeric_dtype(series):  # numeric
-                try:
-                    v = float(val)
-                except Exception:
-                    v = np.nan
-                if op == "=":   mask = series == v
-                if op == "!=":  mask = series != v
-                if op == ">":   mask = series >  v
-                if op == ">=":  mask = series >= v
-                if op == "<":   mask = series <  v
-                if op == "<=":  mask = series <= v
-            else:
-                if op == "=":   mask = series.astype(str) == val
-                if op == "!=":  mask = series.astype(str) != val
+                # fallback to string equality/inequality only
+                text = s.astype("string")
+                if op == "=":
+                    mask = text == val
+                elif op == "!=":
+                    mask = text != val
                 else:
-                    mask = pd.Series(True, index=df.index)  # unsupported op on strings
+                    # can't do >,< on non-numeric strings
+                    continue
+        else:
+            continue
+
         df = df[mask]
+
     return df
+
+
+
 
 def apply_filters(df_in: pd.DataFrame, subfamilies, domains, mincov,
                   must_have_domain=False, ltr_statuses=None):
@@ -1256,7 +1293,6 @@ def _split_filter_part(filter_part: str):
     Input("ltr-table", "page_current"),
     Input("ltr-table", "page_size"),
     Input("ltr-table", "sort_by"),
-    Input("ltr-table", "filter_query"),
     Input("flt-ltr-subfamily", "value"),
     Input("flt-ltr-len-min", "value"),
     Input("flt-ltr-len-max", "value"),
@@ -1269,7 +1305,7 @@ def _split_filter_part(filter_part: str):
     # <-- NEW: the link payload
     Input("store-linked-internal-names", "data"),
 )
-def ltr_table_page(page_current, page_size, sort_by, filter_query,
+def ltr_table_page(page_current, page_size, sort_by,
                    subf_sel, len_min, len_max, min_nmotifs,
                    type_sel, intsub_sel, dist_min, dist_max,
                    linked_internal_names):
@@ -1304,8 +1340,6 @@ def ltr_table_page(page_current, page_size, sort_by, filter_query,
 
     df = df[df["ltr_len"].between(lmin, lmax, inclusive="both")]
     df = df[df["dist_to_tss"].between(dmin, dmax, inclusive="both")]
-    # DataTable filter bar
-    df = _apply_bar_filter(df, filter_query)
 
     # Sorting
     if sort_by:
