@@ -17,6 +17,48 @@ It integrates two genome-wide resources:
 HERVarium allows you to browse loci through an embedded **IGV browser**, apply biological filters,
 and link internal regions → LTRs → U3/R/U5 regulatory features.
 
+## 🚀 Quick start 
+
+For reviewers and users who want to run HERVarium locally with minimal setup,
+we provide a **self-contained data bundle** hosted on Zenodo.
+
+This bundle includes:
+- The complete HERVarium application
+- All precomputed annotation assets (BED/BigBed, Parquet, FASTA)
+- The conda environment file
+- Directory structure expected by the app
+
+**No manual data assembly is required.**
+
+### Download and run HERVarium locally
+
+1. Download the HERVarium data bundle:
+   - https://doi.org/10.5281/zenodo.18551737
+
+2. Unpack the archive:
+   ```bash
+   tar -xvf hervarium.tar.xz
+   cd HERVarium
+   ```
+3. Create and activate the conda environment:
+
+   ```bash
+   conda env create -f environment.yml
+   conda activate hervarium
+   ```
+4. Run the application:
+
+   ```bash
+   python app.py
+
+5. Open your browser at:
+
+   ```
+   http://127.0.0.1:8050
+   ``` 
+This is the recommended installation method during the preprint and initial release phase.
+
+
 ## 🧬 Data availability
 
 All raw and derived datasets used in HERVarium are publicly available in three Zenodo repositories:
@@ -27,8 +69,11 @@ All raw and derived datasets used in HERVarium are publicly available in three Z
 - **Internal domain annotation (HERV ORFs + GyDB HMMs)**  
   https://doi.org/10.5281/zenodo.16318927
 
-- **HERVarium data bundle for the interactive application**  
-  https://doi.org/10.5281/zenodo.18551737 
+The recommended way to obtain a fully functional local installation of HERVarium
+is via the prepackaged **HERVarium data bundle** hosted on Zenodo: https://doi.org/10.5281/zenodo.18551737.  
+This archive contains all scripts, assets, and directory structure required to run
+the application locally without additional downloads.
+   
 
 ## 📁 Repository structure
 
@@ -106,73 +151,6 @@ Each Zenodo record contains:
 • Documentation of file formats  
 
 
-## ⚙️ Installation
-
-HERVarium can be installed and run locally using **conda**.
-
-### 1. Clone the repository
-
-```
-git clone https://github.com/<YOUR-USERNAME>/HERVarium.git
-cd HERVarium
-``` 
-
-### 2. Create the environment
-
-#### 📦 environment.yml
-
-Below is a complete conda environment tested with HERVarium:
-
-```
-name: hervarium
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-
-dependencies:
-  - python=3.10
-  - pip
-  - dash
-  - dash-bio
-  - dash-bootstrap-components
-  - flask-caching
-  - pandas
-  - numpy
-  - duckdb
-  - pyarrow
-  - gunicorn        # optional for deployment
-  - aiohttp         # optional igv.js compatibility
-  - pip:
-      - dash==2.14.2
-      - dash-bio==1.0.2
-      - dash-bootstrap-components==1.6.0
-      - flask-caching
-``` 
-
-
-``` 
-conda env create -f environment.yml
-conda activate hervarium
-```
-
-### 3. Download the precomputed annotation files
-
-Download the Zenodo HERVarium data bundle:
-- [https://doi.org/10.5281/zenodo.18551737](https://doi.org/10.5281/zenodo.18551737)
-
-From each file, copy them to their corresponding folder. Keep the file names unchanged (the app expects these exact names). 
-
-## ▶️ Run HERVarium locally
-
-```
-python app.py
-```
-
-Then open:
-```
-http://127.0.0.1:8050
-```
 ## 🧬 Usage
 
 Main functionalities:
