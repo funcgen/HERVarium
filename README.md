@@ -184,7 +184,7 @@ Main functionalities:
 
 If you use HERVarium in your work, please cite:
 
->Montserrat-Ayuso, T., & Esteve-Codina, A. (2025). Regulatory Features and Functional Specialization of Human Endogenous Retroviral LTRs: A Genome-Wide Annotation and Analysis via HERVarium. Manuscript in preparation.
+>Regulatory Features and Functional Specialization of Human Endogenous Retroviral LTRs: A Genome-Wide Annotation and Analysis via HERVarium. Tomàs Montserrat-Ayuso, Aurora Pujol, Anna Esteve-Codina. bioRxiv 2026.02.17.706328; doi: https://doi.org/10.64898/2026.02.17.706328
 
 Data citations:
 > Internal domain annotation: https://doi.org/10.5281/zenodo.16318927
